@@ -1,0 +1,124 @@
+use Biblioteca // Comando para criar banco de dados
+
+db.ceatecollection('livros') // Comando criando coleção
+
+//1- Insirando os seguintes livros na coleção
+db.livros.insert(
+      {
+      nome:"duna",
+      autor:"frank hebert",
+      genero:"ficcao",
+      ano:1965,
+      isbn:978-85-7657-101-8
+      }
+)
+show collections
+
+db.livros.find().pretty()
+
+db.livros.insertMany([
+      {
+      nome: "dom casmurro",  autor: "machado de assis",  genero: "ficcao", 
+      ano: "1899", 
+      isbn: "978-850815-361-9"
+      },
+      {
+      nome: "o sol e para todos", autor: "harper lee", genero: "ficcao", 
+      ano: "1960", 
+      isbn: "972-290683-6"
+      },
+      {
+      nome: "cosmos", 
+      autor: "carl sagan", genero: "nao-ficcao", 
+      ano: "1980", 
+      isbn: "9780-345-53943-4"
+      },
+      {
+      nome: "uma breve historia do tempo", 
+      autor: "stephen hawking", genero: "nao-ficcao", 
+      ano: "1988", 
+      isbn: "972-662010-4"
+      },
+      {
+      nome: "devoradores de estrelas", 
+      autor: "andy weir", genero: "ficcao", 
+      ano: "2021", 
+      isbn: "9780-593-39556-1"
+      }
+])
+
+  //2 - Consultando a coleção o livro "COSMOS"
+  db.livros.find(
+        {"nome" : {$eq: "cosmos"}}
+        ).pretty()
+
+  //5- Insira mais um livro:
+  db.livros.insertMany([
+      {
+      nome: "1984", 
+      autor: "george orwell", 
+      genero: "ficcao", 
+      ano: "1949", 
+      isbn: "978-8-535-91484-9"
+      }
+  ])
+
+db.livros.find().pretty()
+
+//9 - Atualize o nome do livro "DEVORADORES DE ESTRELAS" para "PROJECT HAIL MARY"
+db.livros.updateOne(
+{$set: {"nome": "project hail mary"}},
+{"autor": "andy weir"},
+{"genero": "ficcao"},
+{"ano": "2021"},
+{"isbn": "978-0-593-39556-1"}
+)
+
+//10 - Exclua o livro "1984"
+deleteOne(
+      {
+      nome: "1984",
+      autor: "george orwell",genero: "ficcao",
+      ano: "1949",
+      isbn: "978-8-535-91484-9"
+      }
+)
+
+//Os livros que os livros são maiores do que 1979
+db.livros.find({ano: { $gt:1979}})
+
+//Os livros que os livros são menores do que 1979
+db.livros.find({ano: { $lt:1979}})
+
+//Os livros que não contem o ano 1960
+db.livros.find({ano: { $ne:1960 }})
+
+//Os livros que começam com letra d
+db.livros.find({nome:/^d/})
+
+//Os livros que terminam com letra s
+db.livros.find({nome:/s$/})
+
+//Mostrar o nome de todos os livros do banco
+db.livros.distinct("nome").sort()
+
+//
+db.livros.find().sort({KEY: -1})
+
+//
+db.usuarios.createIndex({"nome":1})
+
+//
+db.livro.explain("executionStats").find({nome: "Duna"})
+
+//contador de quantidade
+db.livros.count(
+    {"ano": "1960"}
+)
+//mongodb datasample: baixar e usar para baixar o que a gente precisar, por exemplo uns 10000 filmes
+
+//para testar e importar: https://github.com/neelabalan/mongodb-sample-dataset
+
+//*** aprender a importa datasample
+
+//ver esse filme: https://www.youtube.com/watch?v=tpz-6Trd1UI
