@@ -1,0 +1,251 @@
+use("sample_mflix")
+
+db.movies.find()
+
+//Verificar quantos filmes lançados em 1990
+use("sample_mflix")
+db.movies.find(
+  {year: 1990}
+).count()
+
+//Verificar quantos filmes lançados em 199
+use("sample_mflix")
+db.movies.find(
+  {year: 199}
+).count()
+
+//Verificar os nomes dos filmes lançados em 2015
+use("sample_mflix")
+db.movies.find(
+  {year: 2015}
+)
+
+//Verificar os nomes dos filmes lançados em 2015 e no Brazil //Vai mostrar todos os lançados no Brazil, independente do ano
+use("sample_mflix")
+db.movies.find(
+  {year: 2015, countries:"Brazil"}
+)
+
+//Verificar os filmes lançados em 2015 e na Venezuela "$or: ou" //Vai mostrar todos os lançados na Venezuela, independente do ano
+use("sample_mflix")
+db.movies.find(
+  {
+    $or:
+    [
+      {"year": 2015},
+      {countries:"Venezuela"}
+    ]
+  }
+)
+
+//Os filmes lançados em 2014 e 2015
+use("sample_mflix")
+db.movies.find({
+year:{
+  $in:[2014, 2015]
+}
+})
+
+//Quantidades de filmes lançados em 2014 e 2015
+use("sample_mflix")
+db.movies.find({
+year:{
+  $in:[2014, 2015]
+}
+}).count()
+
+//mostrar Filmes lançados entre 1990 e 2010 E que devem conter Angelina Jolie ou Fernanda Montenegro
+use("sample_mflix")
+db.movies.find({
+  year:{
+    $gt:1990,
+    $lt:2010
+  }
+}).sort({
+  year:-1
+})
+
+//mostrar Filmes lançados de 1990 a 2010
+use("sample_mflix")
+db.movies.find({
+  year:{
+    $gte:1990,
+    $lte:2010
+  }
+}).sort({
+  year:-1
+})
+
+//Mostrar os filmes que tem Angelina Jolie ou Fernanda Montenegro // erro
+use("sample_mflix")
+db.movies.find({
+      cast:{
+      $or:{"Angelina Jolie"},{"Fernanda Montenegro"}
+      }
+})
+
+use("sample_mflix")
+db.movies.find(
+  {
+    $or:
+      {cast: "Angelina Jolie"},
+      {cast:"Fernanda Montenegro"}
+  }
+)
+
+//Mostrar os filmes que tem Angelina Jolie e Fernanda Montenegro atuando juntas
+use("sample_mflix")
+db.movies.find({
+      cast:{
+      $in:["Angelina Jolie","Fernanda Montenegro"]
+      }
+})
+
+//filmes lançados entre 1990 e 2010 E que devem conter Angelina Jolie ou Fernanda Montenegro(o sort é para ordenar)
+use("sample_mflix")
+db.movies.find({
+    $and: [
+        {
+            $or: [{ year: { $gte: 1990, $lte: 2010 } }],
+        }, {
+            $or: [{ cast: { $in: ['Fernanda Montenegro', 'Angelina Jolie'] } }],
+        }
+    ]
+}).sort({ year: 1 })
+
+//Mostrar quantos filmes que não tem Angelina Jolie e Fernanda Montenegro atuando juntas
+use("sample_mflix")
+db.movies.find({
+  cast:{
+    $not:{
+      $in:["Angelina Jolie","Fernanda Montenegro"]
+    }
+  }
+}).count()
+)
+
+//ou
+use("sample_mflix")
+db.movies.find({
+      cast:{
+      $nin:["Angelina Jolie","Fernanda Montenegro"]
+      }
+}).count()
+
+//Mostrar a quantidade de filmes nos quais tem Angelina Jolie e Fernanda Montenegro atuando juntas
+use("sample_mflix")
+db.movies.find({
+  cast:{
+      $in:["Angelina Jolie","Fernanda Montenegro"]
+    }
+}).count()
+
+//Consultas na Binlioteca movies
+use("sample_mflix")
+db.movies.find()
+
+// Soma de prêmios ganhos dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.aggregate([
+ {
+   $group:{
+     _id:"",
+     "premios":{$sum:"$awards.wins"}
+   }
+ },{
+   $project:{"Total de vitorias"
+   :"$premios"}
+ }
+])
+
+// Média de prêmios ganhos dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.aggregate([
+ {
+   $group:{
+     _id:"",
+     "premios":{$avg:"$awards.wins"}
+   }
+ },{
+   $project:{"Media de vitorias"
+   :"$premios"}
+ }
+])
+
+//Filme que ganhou + prêmios dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.aggregate([
+ {
+   $group:{
+     _id:"",
+     "premios":{$max:"$awards.wins"}
+   }
+ },{
+   $project:{"Maior número de vitorias"
+   :"$premios"}
+ }
+])
+
+//Filme que ganhou - prêmios dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.aggregate([
+ {
+   $group:{
+     _id:"",
+     "premios":{$min:"$awards.wins"}
+   }
+ },{
+   $project:{"Menor número de vitorias"
+   :"$premios"}
+ }
+])
+
+//Nome do filme que ganhou + prêmios dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.findOne({
+  "awards.wins": 267
+})
+
+//Nomes de filmes que ganharam - prêmios dos filmes cadastrados no banco de dados
+use("sample_mflix")
+db.movies.findOne({
+  "awards.wins": 0
+})
+
+//Mostrar o total de prêmios do Titanic
+use("sample_mflix")
+db.movies.aggregate([
+  {$match:{
+    title:"Titanic"
+  }},
+ {
+   $group:{
+     _id:"",
+     "premios":{$sum:"$awards.wins"}
+   }
+ },{
+   $project:{"Número de prêmios do Titatnic"
+   :"$premios"}
+ }
+])
+
+//Realizando AGREGAÇÃO de duas COLEÇÕES
+use("sample_analytics")
+db.accounts.find({
+  account_id:371138
+})
+
+// Retornar todas as transacoes de uma conta
+use("sample_analytics")
+db.accounts.aggregate({
+  $match:{account_id:371138},
+},
+{
+  $lookup:{
+    from:"transactions",
+    localField:"acount_id",
+    foreignField:"account_id",
+    as:"transacoes",
+    as:"transacoes"
+  }
+})
